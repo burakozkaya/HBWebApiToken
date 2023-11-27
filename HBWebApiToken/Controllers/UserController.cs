@@ -77,6 +77,8 @@ namespace HBWebApiToken.Controllers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration.GetSection("Token:Audience").Value,
                 Issuer = _configuration.GetSection("Token:Issuer").Value,
+                NotBefore = DateTime.Now,
+                Expires = DateTime.Now.AddDays(1),
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
