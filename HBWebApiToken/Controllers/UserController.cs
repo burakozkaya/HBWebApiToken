@@ -1,12 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using HBWebApiToken.Context;
-using HBWebApiToken.Entity;
-using Microsoft.AspNetCore.Http;
+﻿using HBWebApiToken.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace HBWebApiToken.Controllers
 {
@@ -14,14 +12,12 @@ namespace HBWebApiToken.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public UserController(AppDbContext appDbContext,UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,IConfiguration configuration)
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration)
         {
-            _appDbContext = appDbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
@@ -32,6 +28,7 @@ namespace HBWebApiToken.Controllers
         {
             var user = new AppUser()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = userRegisterDto.Name,
                 Surname = userRegisterDto.Surname,
                 UserName = userRegisterDto.UserName,
@@ -65,7 +62,7 @@ namespace HBWebApiToken.Controllers
         }
 
         private string GenerateToken(AppUser user)
-        { 
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration.GetSection("Token:Key").Value);
             var tokenDescriptor = new SecurityTokenDescriptor()
@@ -77,7 +74,7 @@ namespace HBWebApiToken.Controllers
                     new Claim(ClaimTypes.Email,user.Email),
                     new Claim(ClaimTypes.DateOfBirth,user.BirthDate.ToString()),
                 }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration.GetSection("Token:Audience").Value,
                 Issuer = _configuration.GetSection("Token:Issuer").Value,
             };
@@ -86,7 +83,7 @@ namespace HBWebApiToken.Controllers
         }
     }
 
-   
+
 
     public class UserRegisterDto
     {
@@ -98,7 +95,7 @@ namespace HBWebApiToken.Controllers
         public DateTime BirthDate { get; set; }
     }
 
-    public class UserLoginDto   
+    public class UserLoginDto
     {
         public string Email { get; set; }
         public string Password { get; set; }

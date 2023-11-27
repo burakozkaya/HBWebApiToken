@@ -7,5 +7,5 @@ public class AppUser : IdentityUser<string>
     public string Name { get; set; }
     public string Surname { get; set; }
     public DateTime BirthDate { get; set; }
-    public List<Book> Books { get; set; }
+    public List<UserFavBook> FavBooks { get; set; }
 }

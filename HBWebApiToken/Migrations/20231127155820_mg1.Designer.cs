@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HBWebApiToken.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231127123737_mg1")]
+    [Migration("20231127155820_mg1")]
     partial class mg1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,21 +23,6 @@ namespace HBWebApiToken.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("AppUserBook", b =>
-                {
-                    b.Property<string>("AppUsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("BooksId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AppUsersId", "BooksId");
-
-                    b.HasIndex("BooksId");
-
-                    b.ToTable("AppUserBook");
-                });
 
             modelBuilder.Entity("HBWebApiToken.Entity.AppRole", b =>
                 {
@@ -64,6 +49,20 @@ namespace HBWebApiToken.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "35e1547f-ca2a-4a55-ad6f-765fe6636050",
+                            ConcurrencyStamp = "f89d40ac-961d-4a8a-a9ee-0ede9aaf83a6",
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = "8e86caac-98de-4c75-b5ad-b2e88e72457f",
+                            ConcurrencyStamp = "79245381-1ace-4839-9a56-6fcc39707b0f",
+                            Name = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("HBWebApiToken.Entity.AppUser", b =>
@@ -150,6 +149,10 @@ namespace HBWebApiToken.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BookName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -168,6 +171,21 @@ namespace HBWebApiToken.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("HBWebApiToken.Entity.UserFavBook", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppUserId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("FavBooks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -276,19 +294,23 @@ namespace HBWebApiToken.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppUserBook", b =>
+            modelBuilder.Entity("HBWebApiToken.Entity.UserFavBook", b =>
                 {
-                    b.HasOne("HBWebApiToken.Entity.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("AppUsersId")
+                    b.HasOne("HBWebApiToken.Entity.AppUser", "AppUser")
+                        .WithMany("FavBooks")
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HBWebApiToken.Entity.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
+                    b.HasOne("HBWebApiToken.Entity.Book", "Book")
+                        .WithMany("FavBooks")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -340,6 +362,16 @@ namespace HBWebApiToken.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HBWebApiToken.Entity.AppUser", b =>
+                {
+                    b.Navigation("FavBooks");
+                });
+
+            modelBuilder.Entity("HBWebApiToken.Entity.Book", b =>
+                {
+                    b.Navigation("FavBooks");
                 });
 #pragma warning restore 612, 618
         }

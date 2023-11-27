@@ -1,11 +1,10 @@
-﻿using System.Security.Claims;
-using HBWebApiToken.Context;
+﻿using HBWebApiToken.Context;
 using HBWebApiToken.Entity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HBWebApiToken.Controllers
 {
@@ -22,11 +21,41 @@ namespace HBWebApiToken.Controllers
         }
 
         [HttpGet("userFavBooks")]
-        public IActionResult GetUserFavBooks()
+        public async Task<IActionResult> GetUserFavBooks()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var books = _appDbContext.Books.Where(x => x.AppUsers.Any(x=>x.Id == userId)).ToList();
+            var books = await _appDbContext.FavBooks
+                .Include(x => x.Book)
+                .Where(x => x.AppUserId == userId)
+                .Select(x => x.Book)
+                .ToListAsync();
+
             return Ok(books);
+        }
+
+        [HttpPost("AddFavBook/{id}")]
+        public async Task<IActionResult> AddFavBook(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var book = await _appDbContext.Books.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (book != null && user != null)
+            {
+                var userFavBook = new UserFavBook
+                {
+                    AppUserId = userId,
+                    BookId = id
+                };
+
+                _appDbContext.FavBooks.Add(userFavBook);
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return NotFound();
         }
 
         [HttpGet]
@@ -50,6 +79,7 @@ namespace HBWebApiToken.Controllers
             {
                 BookName = bookDto.BookName,
                 CategoryName = bookDto.CategoryName,
+                AuthorName = bookDto.AuthorName,
                 Page = bookDto.Page,
                 Color = bookDto.Color
             };
@@ -57,12 +87,48 @@ namespace HBWebApiToken.Controllers
             await _appDbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
         }
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            var temp = _appDbContext.Books.FirstOrDefault(x => x.Id == id);
+            if (temp != null)
+            {
+                _appDbContext.Books.Remove(temp);
+                await _appDbContext.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
 
         [HttpGet("listBook")]
-        public async Task<IActionResult> ListBooks(int pagenumber, int pagesize)
+        public async Task<IActionResult> ListBooks([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            var books = await _appDbContext.Books.Skip((pagenumber - 1) * pagesize).Take(pagesize).ToListAsync();
+            if (pageNumber <= 0)
+                pageNumber = 1;
+            if (pageSize <= 0)
+                pageSize = 50;
+
+            var books = await _appDbContext.Books.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return Ok(books);
+        }
+
+        [HttpGet("filterBooks")]
+        public async Task<IActionResult> FilterBooks(Filter? filter, [FromQuery] int pageNumber,
+            [FromQuery] int pageSize)
+        {
+            var temp = _appDbContext.Books.AsQueryable();
+            if (filter.MaxPage >= 0)
+                temp = temp.Where(x => x.Page < filter.MaxPage);
+            if (filter.MinPage >= 0)
+                temp = temp.Where(x => x.Page > filter.MinPage);
+            if (!string.IsNullOrWhiteSpace(filter.CategoryName))
+                temp = temp.Where(x => x.CategoryName == filter.CategoryName);
+            if (!string.IsNullOrWhiteSpace(filter.Color))
+                temp = temp.Where(x => x.AuthorName == filter.Color);
+            if (!string.IsNullOrWhiteSpace(filter.AuthorName))
+                temp = temp.Where(x => x.AuthorName == filter.AuthorName);
+            return Ok(await temp.ToListAsync());
         }
     }
 
@@ -70,7 +136,17 @@ namespace HBWebApiToken.Controllers
     {
         public string BookName { get; set; }
         public string CategoryName { get; set; }
+        public string AuthorName { get; set; }
         public int Page { get; set; }
         public string Color { get; set; }
+    }
+
+    public class Filter
+    {
+        public int? MaxPage { get; set; }
+        public int? MinPage { get; set; }
+        public string? CategoryName { get; set; }
+        public string? Color { get; set; }
+        public string? AuthorName { get; set; }
     }
 }

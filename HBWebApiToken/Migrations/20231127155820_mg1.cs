@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HBWebApiToken.Migrations
 {
-    public partial class mg : Migration
+    public partial class mg1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,6 +58,7 @@ namespace HBWebApiToken.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Page = table.Column<int>(type: "int", nullable: false),
                     Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -174,33 +175,38 @@ namespace HBWebApiToken.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppUserBook",
+                name: "FavBooks",
                 columns: table => new
                 {
-                    AppUsersId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BooksId = table.Column<int>(type: "int", nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: false),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppUserBook", x => new { x.AppUsersId, x.BooksId });
+                    table.PrimaryKey("PK_FavBooks", x => new { x.AppUserId, x.BookId });
                     table.ForeignKey(
-                        name: "FK_AppUserBook_AspNetUsers_AppUsersId",
-                        column: x => x.AppUsersId,
+                        name: "FK_FavBooks_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AppUserBook_Books_BooksId",
-                        column: x => x.BooksId,
+                        name: "FK_FavBooks_Books_BookId",
+                        column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AppUserBook_BooksId",
-                table: "AppUserBook",
-                column: "BooksId");
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "35e1547f-ca2a-4a55-ad6f-765fe6636050", "f89d40ac-961d-4a8a-a9ee-0ede9aaf83a6", "User", null });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "8e86caac-98de-4c75-b5ad-b2e88e72457f", "79245381-1ace-4839-9a56-6fcc39707b0f", "Admin", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -240,13 +246,15 @@ namespace HBWebApiToken.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavBooks_BookId",
+                table: "FavBooks",
+                column: "BookId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AppUserBook");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -263,13 +271,16 @@ namespace HBWebApiToken.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "FavBooks");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Books");
         }
     }
 }
