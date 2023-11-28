@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HBWebApiToken.Controllers
 {
-    [Authorize(policy:)]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : ControllerBase
