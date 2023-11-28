@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HBWebApiToken.Controllers
 {
-    [Authorize]
+    [Authorize(policy:)]
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : ControllerBase
@@ -120,7 +120,7 @@ namespace HBWebApiToken.Controllers
             [FromQuery] int pageSize)
         {
             var temp = _appDbContext.Books.AsQueryable();
-            if (filter.MaxPage >= 0)
+            if (filter.MaxPage <= 0)
                 temp = temp.Where(x => x.Page < filter.MaxPage);
             if (filter.MinPage >= 0)
                 temp = temp.Where(x => x.Page > filter.MinPage);
