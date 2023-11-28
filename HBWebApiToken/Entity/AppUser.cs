@@ -2,7 +2,7 @@
 
 namespace HBWebApiToken.Entity;
 
-public class AppUser : IdentityUser<string>
+public class AppUser : IdentityUser
 {
     public string? Name { get; set; }
     public string? Surname { get; set; }

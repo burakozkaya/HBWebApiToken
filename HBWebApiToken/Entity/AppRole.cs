@@ -2,7 +2,7 @@
 
 namespace HBWebApiToken.Entity;
 
-public class AppRole : IdentityRole<string>
+public class AppRole : IdentityRole
 {
-    
+
 }

@@ -28,7 +28,6 @@ namespace HBWebApiToken.Controllers
         {
             var user = new AppUser()
             {
-                Id = Guid.NewGuid().ToString(),
                 Name = userRegisterDto.Name,
                 Surname = userRegisterDto.Surname,
                 UserName = userRegisterDto.UserName,

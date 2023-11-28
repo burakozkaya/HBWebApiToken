@@ -51,14 +51,14 @@ namespace HBWebApiToken.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "97fe8ca4-c6fc-4863-96d2-63d108e4a8a8",
-                            ConcurrencyStamp = "2f3c88d6-c34f-43bf-9851-a39fc42f32b5",
+                            Id = "532fa3dd-8331-48df-a889-395fb3be7eb5",
+                            ConcurrencyStamp = "125111a3-3189-4519-ba48-2b193122bfda",
                             Name = "User"
                         },
                         new
                         {
-                            Id = "300b943b-a388-4ad2-a71f-d6fd2c967f24",
-                            ConcurrencyStamp = "eff9e138-a0c8-438a-8f00-a61d6f0a2c55",
+                            Id = "d577cf0d-ed32-4129-af0b-12ad0eea04e4",
+                            ConcurrencyStamp = "b4c0c056-9fdd-405f-b0ac-010bcf5350e3",
                             Name = "Admin"
                         });
                 });
@@ -139,18 +139,18 @@ namespace HBWebApiToken.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af33e95b-7fdd-4d54-b93f-fd6331b8f7db",
+                            Id = "b828ffae-368e-4af1-8ec5-fb35da7a1def",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "88432928-3a2d-40a5-a552-f04f9184d938",
+                            ConcurrencyStamp = "904938e1-4c3d-41fc-ad9e-ea4820ce8776",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGuYz+IQnCxVcPS5Quvwgtpkr0pCFB0JqZ9ZTbiMFAC6QaHRea1nH1FUh/ZQN8NR0g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOmi10p8RQSsdhjyHPmXLKC1VocFsBHLAYGdVDUVsXd7ZcvtPMf+MMD4xIBYFLVcyw==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "3c058005-4fea-458b-920b-7ffb5312d650",
+                            SecurityStamp = "dc7abb29-1908-43cb-85ea-a01ae9020a01",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -292,8 +292,8 @@ namespace HBWebApiToken.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "af33e95b-7fdd-4d54-b93f-fd6331b8f7db",
-                            RoleId = "300b943b-a388-4ad2-a71f-d6fd2c967f24"
+                            UserId = "b828ffae-368e-4af1-8ec5-fb35da7a1def",
+                            RoleId = "d577cf0d-ed32-4129-af0b-12ad0eea04e4"
                         });
                 });
 
