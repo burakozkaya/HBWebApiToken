@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace HBWebApiToken.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : ControllerBase
@@ -38,10 +38,9 @@ namespace HBWebApiToken.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var book = await _appDbContext.Books.FirstOrDefaultAsync(x => x.Id == id);
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            var exists = await _appDbContext.Books.AnyAsync(x => x.Id == id) && await _appDbContext.Users.AnyAsync(x => x.Id == userId);
 
-            if (book != null && user != null)
+            if (exists)
             {
                 var userFavBook = new UserFavBook
                 {
@@ -57,6 +56,7 @@ namespace HBWebApiToken.Controllers
 
             return NotFound();
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetBooks()

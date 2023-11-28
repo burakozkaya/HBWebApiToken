@@ -70,6 +70,7 @@ namespace HBWebApiToken.Controllers
             {
                 userRole.Add("User");
             }
+            List<Claim> claims = userRole.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -78,7 +79,7 @@ namespace HBWebApiToken.Controllers
                     new Claim(ClaimTypes.Name,user.UserName),
                     new Claim(ClaimTypes.Email,user.Email),
                     new Claim(ClaimTypes.Role,userRole[0]),
-                    new Claim(ClaimTypes.DateOfBirth,user.BirthDate.ToString()),
+                    new Claim(ClaimTypes.DateOfBirth,user.BirthDate.ToString() ?? string.Empty),
                 }),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration.GetSection("Token:Audience").Value,
