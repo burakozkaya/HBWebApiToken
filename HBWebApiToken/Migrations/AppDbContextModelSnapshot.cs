@@ -51,14 +51,14 @@ namespace HBWebApiToken.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "35e1547f-ca2a-4a55-ad6f-765fe6636050",
-                            ConcurrencyStamp = "f89d40ac-961d-4a8a-a9ee-0ede9aaf83a6",
+                            Id = "97fe8ca4-c6fc-4863-96d2-63d108e4a8a8",
+                            ConcurrencyStamp = "2f3c88d6-c34f-43bf-9851-a39fc42f32b5",
                             Name = "User"
                         },
                         new
                         {
-                            Id = "8e86caac-98de-4c75-b5ad-b2e88e72457f",
-                            ConcurrencyStamp = "79245381-1ace-4839-9a56-6fcc39707b0f",
+                            Id = "300b943b-a388-4ad2-a71f-d6fd2c967f24",
+                            ConcurrencyStamp = "eff9e138-a0c8-438a-8f00-a61d6f0a2c55",
                             Name = "Admin"
                         });
                 });
@@ -71,7 +71,7 @@ namespace HBWebApiToken.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -92,7 +92,6 @@ namespace HBWebApiToken.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
@@ -116,7 +115,6 @@ namespace HBWebApiToken.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -137,6 +135,25 @@ namespace HBWebApiToken.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "af33e95b-7fdd-4d54-b93f-fd6331b8f7db",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "88432928-3a2d-40a5-a552-f04f9184d938",
+                            Email = "admin@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGuYz+IQnCxVcPS5Quvwgtpkr0pCFB0JqZ9ZTbiMFAC6QaHRea1nH1FUh/ZQN8NR0g==",
+                            PhoneNumber = "1234567890",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "3c058005-4fea-458b-920b-7ffb5312d650",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("HBWebApiToken.Entity.Book", b =>
@@ -271,6 +288,13 @@ namespace HBWebApiToken.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "af33e95b-7fdd-4d54-b93f-fd6331b8f7db",
+                            RoleId = "300b943b-a388-4ad2-a71f-d6fd2c967f24"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

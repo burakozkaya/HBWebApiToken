@@ -73,6 +73,7 @@ namespace HBWebApiToken.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddBook(BookDto bookDto)
         {
             Book book = new Book()
@@ -89,6 +90,7 @@ namespace HBWebApiToken.Controllers
         }
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var temp = _appDbContext.Books.FirstOrDefault(x => x.Id == id);

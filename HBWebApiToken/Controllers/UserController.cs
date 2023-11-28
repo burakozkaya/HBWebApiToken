@@ -65,6 +65,11 @@ namespace HBWebApiToken.Controllers
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration.GetSection("Token:Key").Value);
+            var userRole = _userManager.GetRolesAsync(user).Result;
+            if (!userRole.Any())
+            {
+                userRole.Add("User");
+            }
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -72,6 +77,7 @@ namespace HBWebApiToken.Controllers
                     new Claim(ClaimTypes.NameIdentifier,user.Id),
                     new Claim(ClaimTypes.Name,user.UserName),
                     new Claim(ClaimTypes.Email,user.Email),
+                    new Claim(ClaimTypes.Role,userRole[0]),
                     new Claim(ClaimTypes.DateOfBirth,user.BirthDate.ToString()),
                 }),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

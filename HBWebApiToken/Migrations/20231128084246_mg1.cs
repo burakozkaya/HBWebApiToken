@@ -28,9 +28,9 @@ namespace HBWebApiToken.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -201,12 +201,22 @@ namespace HBWebApiToken.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "35e1547f-ca2a-4a55-ad6f-765fe6636050", "f89d40ac-961d-4a8a-a9ee-0ede9aaf83a6", "User", null });
+                values: new object[] { "300b943b-a388-4ad2-a71f-d6fd2c967f24", "eff9e138-a0c8-438a-8f00-a61d6f0a2c55", "Admin", null });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "8e86caac-98de-4c75-b5ad-b2e88e72457f", "79245381-1ace-4839-9a56-6fcc39707b0f", "Admin", null });
+                values: new object[] { "97fe8ca4-c6fc-4863-96d2-63d108e4a8a8", "2f3c88d6-c34f-43bf-9851-a39fc42f32b5", "User", null });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "Surname", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "af33e95b-7fdd-4d54-b93f-fd6331b8f7db", 0, null, "88432928-3a2d-40a5-a552-f04f9184d938", "admin@example.com", true, false, null, null, "ADMIN@EXAMPLE.COM", "ADMIN", "AQAAAAEAACcQAAAAEGuYz+IQnCxVcPS5Quvwgtpkr0pCFB0JqZ9ZTbiMFAC6QaHRea1nH1FUh/ZQN8NR0g==", "1234567890", true, "3c058005-4fea-458b-920b-7ffb5312d650", null, false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "300b943b-a388-4ad2-a71f-d6fd2c967f24", "af33e95b-7fdd-4d54-b93f-fd6331b8f7db" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
