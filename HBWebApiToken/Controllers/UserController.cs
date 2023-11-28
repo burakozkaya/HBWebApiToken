@@ -64,25 +64,29 @@ namespace HBWebApiToken.Controllers
         private string GenerateToken(AppUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration.GetSection("Token:Key").Value);
-            var userRole = _userManager.GetRolesAsync(user).Result;
-            List<Claim> claims = userRole.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
-            var tokenDescriptor = new SecurityTokenDescriptor()
+            var key = Encoding.UTF8.GetBytes(_configuration["Token:Key"]);
+
+            var userRoles = _userManager.GetRolesAsync(user).Result;
+            var claims = new List<Claim>
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier,user.Id),
-                    new Claim(ClaimTypes.Name,user.UserName),
-                    new Claim(ClaimTypes.Email,user.Email),
-                    new Claim(ClaimTypes.Role,userRole[0]),
-                    new Claim(ClaimTypes.DateOfBirth,user.BirthDate.ToString() ?? string.Empty),
-                }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Audience = _configuration.GetSection("Token:Audience").Value,
-                Issuer = _configuration.GetSection("Token:Issuer").Value,
-                NotBefore = DateTime.Now,
-                Expires = DateTime.Now.AddDays(1),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToString() ?? string.Empty),
             };
+
+            claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddDays(1),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Audience = _configuration["Token:Audience"],
+                Issuer = _configuration["Token:Issuer"],
+            };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
