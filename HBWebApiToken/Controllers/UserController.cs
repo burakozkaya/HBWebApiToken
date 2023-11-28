@@ -66,10 +66,6 @@ namespace HBWebApiToken.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration.GetSection("Token:Key").Value);
             var userRole = _userManager.GetRolesAsync(user).Result;
-            if (!userRole.Any())
-            {
-                userRole.Add("User");
-            }
             List<Claim> claims = userRole.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
